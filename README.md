@@ -1,5 +1,5 @@
 # Easy login V3
-A simple Discord selfbot login script.
+<p>A simple Discord selfbot login script.</p>
 ---
 utilizes __selenium__ with personally written chromedriver auto-updating feature
 <br><br>
