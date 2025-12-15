@@ -19,7 +19,6 @@ try:
     usrsys = sys.platform
     token = ""
     useragent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
-    #useragent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"
     api = json.loads(requests.get('https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json', headers={'User-Agent' : useragent}).text)
     refver = "" # referencing to Main()
     response = ""
@@ -56,7 +55,7 @@ def chop(cvf): #chromedriver version format
     prefix = '.'.join(cvf.split('.')[:-1])+"."
     return prefix
 
-def getchrome(body, idver): #https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json
+def getchrome(body, idver):
     global vcvs #list of valid chromedriver versions
     global instver #new chromedriver installation version
     global ctrl #incrementer
@@ -80,8 +79,6 @@ def getchrome(body, idver): #https://googlechromelabs.github.io/chrome-for-testi
                             if system == usrsys:
                                 current = str(downloads)
                                 return
-                            #else: 
-                                #handle user' system, not recognized
                             systems += 1
 
     if vcvs:
@@ -161,7 +158,6 @@ def download(link):
             for subpath in zip_ref.infolist():
                 if subpath.filename.startswith(filepath+subfile):
                     zip_ref.extract(member=subpath)
-        #os.path.abspath(relative_path)
         shutil.move(src=os.path.join(filepath, subfile), dst=os.path.join('./', subfile))
         delete([subfolder, compfile])
     except Exception as error:
@@ -185,17 +181,12 @@ def login():
     global response
     global token
     try:
-        # = 0
-        #N = 14
-        #chromeloc = 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
-        chromeloc = f'./chromedriver.exe'
+        chromeloc = './chromedriver.exe' # alternative: 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
         Clear()
         options = webdriver.ChromeOptions()
-        #options.add_argument('--headless')
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
-        #options.add_argument('--profile-directory=Profile 2')
-        options.add_argument('--guest')
+        options.add_argument('--guest') # alternative: '--profile-directory=Profile 0' or other number
         options.add_argument('--disable-blink-features=AutomationControlled')
         options.add_argument(f'user-agent={useragent}')
         options.add_experimental_option('detach', True)
@@ -207,7 +198,6 @@ def login():
         else:
             print("No set Chromedriver location")
             exit()
-        #actions = ActionChains(driver) 
         stealth(driver,
             languages=['en-US', 'en'],
             vendor='Google Inc.',
@@ -216,9 +206,6 @@ def login():
             renderer='Intel Iris OpenGL Engine',
             fix_hairline=True,
             )
-        #for _ in range(N):
-        #    actions = actions.send_keys(Keys.TAB)
-        #actions.perform()
         script = """
                 function login(token) {
                 setInterval(() => {
@@ -229,8 +216,6 @@ def login():
                 }, 2500);
                 }
                 """
-        #input("   Press Return when login is complete.")
-        #time.sleep(10)
         driver.get('https://discord.com/login')
         driver.execute_script(script + f'\nlogin("{token}")')
         dev = """
@@ -240,7 +225,6 @@ def login():
                 0).exports.default.getCurrentUser().flags=-33
                 """
         time.sleep(7)
-        #driver.execute_script(dev)
         Clear()
     except FileNotFoundError as FileNotFound:
         print(FileNotFound)
@@ -280,5 +264,6 @@ def Main():
         token = input("   Enter Discord account token: ")
     login()
     tokenInfo(token)
+
 
 Main()
